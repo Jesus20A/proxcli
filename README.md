@@ -75,48 +75,82 @@ groups:
 ### Vm
 - #### inventory
 	Create or update inventory file.
+	
 	![](img/Pasted%20image%2020240430142718.png)
+
+
 - #### get
 	Display more detail info about the Vm, like cpu and memory.
 	- by id
+	
 		![](img/Pasted%20image%2020240430164323.png)
+
+		 
 	- by name
+	
+
 		![](img/Pasted%20image%2020240430164419.png)
+
+
 - #### list
 	Display all VMs along with their current status. 
 	 -  state (default "all")
+	 
 		![](img/Pasted%20image%2020240430182155.png)
+
+
 	 - state running
+	 
 		![](img/Pasted%20image%2020240430182321.png)
+
+
 	 - state stopped
+	
 		![](img/Pasted%20image%2020240430182423.png)
 		
 - #### start
 	Start a Vm by specifying its ID or, if the inventory is configured, also by Name.
 	 - by id 
+	
 		![](img/Pasted%20image%2020240430183040.png)
-	 - by name 
+
+	 - by name
+
 		![](img/Pasted%20image%2020240430183229.png)
+		
 - #### stop
 	Stop a Vm by specifying its ID or, if the inventory is configured, also by Name.
 	 - by id
+
 		![](img/Pasted%20image%2020240430183426.png)
+		
 	 - by name
+	
 		![](img/Pasted%20image%2020240430183510.png)\
 - #### group
 	perform actions on a group if it is configured in the inventory file.
 	 - list
 		List the groups and their members
+	
 		![](img/Pasted%20image%2020240430183745.png)
+		
 	 - get
 		Display more detailed information about the VMs, which are part of the group.
+	
 		![](img/Pasted%20image%2020240430184055.png)
+		
 	 - start
 		Start the VMs in a group, specifying the group name.
+		
 		![](img/Pasted%20image%2020240430184339.png)
+		
 	 - stop
-		Stop the VMs in a group, specifying the group name.		![](img/Pasted%20image%2020240430184209.png)
+		Stop the VMs in a group, specifying the group name.
+				
+		![](img/Pasted%20image%2020240430184209.png)
+		
 ### node
 - #### get
 	Display more detail info about the node, like cpu and memory and load average.
+	
 	![](img/Pasted%20image%2020240430185613.png)
