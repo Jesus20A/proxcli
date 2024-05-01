@@ -1,0 +1,10 @@
+---
+
+config:
+  - node: <node-name>
+    ip: '<node-ip>'
+    security:
+      user: <user>
+      realm: <realm>
+      tokenid: <token-id>
+      token: <api-token>

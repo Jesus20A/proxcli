@@ -1,0 +1,23 @@
+vms:
+    - name: <vm-name>
+      id: <vm-id>
+    - name: <vm-name>
+      id: <vm-id>
+    - name: <vm-name>
+      id: <vm-id>
+    - name: <vm-name>
+      id: <vm-id>
+
+groups:
+  - name: <group-name>
+    vms:
+      - name: <vm-name>
+        id: <vm-id>
+      - name: <vm-name>
+        id: <vm-id>
+  - name: <group-name>
+    vms:
+      - name: <vm-name>
+        id: <vm-id>
+      - name: <vm-name>
+        id: <vm-id>
