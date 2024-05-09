@@ -7,11 +7,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"proxcli/cmd"
-	"proxcli/colors"
-	"proxcli/config"
-	"proxcli/filter"
-	"proxcli/request"
-	"proxcli/structs"
+	"proxcli/pkg/colors"
+	"proxcli/pkg/config"
+	"proxcli/pkg/filter"
+	"proxcli/pkg/request"
+	"proxcli/pkg/types"
 	"strconv"
 
 	"github.com/alexeyco/simpletable"
@@ -29,7 +29,7 @@ func nodeinfo() {
 	config := config.InitConfig()
 	url := fmt.Sprintf("https://%s:8006/api2/json/nodes/%s/status", config["ip"], config["node"])
 	data, _ := request.NewRequest(url, "GET")
-	var info structs.NodeInfo
+	var info types.NodeInfo
 	err := json.Unmarshal(data, &info)
 	if err != nil {
 		fmt.Println(err)

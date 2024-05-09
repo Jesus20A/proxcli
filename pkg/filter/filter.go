@@ -4,16 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"proxcli/config"
-	"proxcli/request"
-	"proxcli/structs"
+	"proxcli/pkg/config"
+	"proxcli/pkg/request"
+	"proxcli/pkg/types"
 	"strconv"
 
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
 
-func Vminfo(id int) (info structs.VmInfo) {
+func Vminfo(id int) (info types.VmInfo) {
 	config := config.InitConfig()
 	url := fmt.Sprintf("https://%s:8006/api2/json/nodes/%s/qemu/%s/status/current", config["ip"], config["node"], strconv.Itoa(id))
 	data, _ := request.NewRequest(url, "GET")
@@ -42,14 +42,14 @@ func WritetoFile(data string, filepath string) error {
 	return err2
 }
 
-func Getgroup(group string) (hosts []structs.Vm) {
+func Getgroup(group string) (hosts []types.Vm) {
 
 	data, err := os.ReadFile(config.Inventoryfile)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	c := structs.Groups{}
+	c := types.Groups{}
 	if err := yaml.Unmarshal(data, &c); err != nil {
 		fmt.Println(err)
 	}
@@ -68,7 +68,7 @@ func GetId(name string) (id int) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	c := structs.Vms{}
+	c := types.Vms{}
 	if err := yaml.Unmarshal(data, &c); err != nil {
 		fmt.Println(err)
 	}
@@ -87,7 +87,7 @@ func Exist(name string, group string, id int) (exist bool) {
 		fmt.Println(err)
 	}
 
-	g := structs.Groups{}
+	g := types.Groups{}
 	if err := yaml.Unmarshal(data, &g); err != nil {
 		fmt.Println(err)
 	}
@@ -98,7 +98,7 @@ func Exist(name string, group string, id int) (exist bool) {
 		}
 	}
 
-	n := structs.Vms{}
+	n := types.Vms{}
 	if err := yaml.Unmarshal(data, &n); err != nil {
 		fmt.Println(err)
 	}

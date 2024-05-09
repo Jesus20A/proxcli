@@ -4,18 +4,18 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"proxcli/colors"
-	"proxcli/config"
-	"proxcli/filter"
-	"proxcli/request"
-	"proxcli/structs"
+	"proxcli/pkg/colors"
+	"proxcli/pkg/config"
+	"proxcli/pkg/filter"
+	"proxcli/pkg/request"
+	"proxcli/pkg/types"
 	"strconv"
 
 	"github.com/alexeyco/simpletable"
 	"github.com/spf13/cobra"
 )
 
-func Table(data []structs.VmInfo) {
+func Table(data []types.VmInfo) {
 	table := simpletable.New()
 
 	table.Header = &simpletable.Header{
@@ -57,7 +57,7 @@ func vmGet(name string, id int) {
 		} else {
 			id = filter.GetId(name)
 			info := filter.Vminfo(id)
-			vm := []structs.VmInfo{info}
+			vm := []types.VmInfo{info}
 			Table(vm)
 
 		}
@@ -66,12 +66,12 @@ func vmGet(name string, id int) {
 		url := fmt.Sprintf("https://%s:8006/api2/json/nodes/%s/qemu/%s/status/current", config["ip"], config["node"], strconv.Itoa(id))
 		data, code := request.NewRequest(url, "GET")
 		if code == 200 {
-			var info structs.VmInfo
+			var info types.VmInfo
 			err := json.Unmarshal(data, &info)
 			if err != nil {
 				fmt.Println(err)
 			}
-			vm := []structs.VmInfo{info}
+			vm := []types.VmInfo{info}
 			Table(vm)
 		} else {
 			fmt.Printf("\u274C ERROR: No Vm with id %d found\n", id)

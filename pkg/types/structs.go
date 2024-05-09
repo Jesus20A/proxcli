@@ -1,4 +1,4 @@
-package structs
+package types
 
 // Group Structs
 type Groups struct {
@@ -52,20 +52,4 @@ type Inventory struct {
 type InventoryInfo struct {
 	Name string `json:"name"`
 	Id   int    `json:"vmid"`
-}
-
-// Configuration Structs
-type Security struct {
-	User    string
-	Realm   string
-	Tokenid string
-	Token   string
-}
-type Server struct {
-	Node     string
-	Ip       string
-	Security Security
-}
-type Config struct {
-	Config []Server
 }

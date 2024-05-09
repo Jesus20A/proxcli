@@ -3,11 +3,11 @@ package vm
 import (
 	"fmt"
 	"os"
-	"proxcli/colors"
-	"proxcli/config"
-	"proxcli/filter"
-	"proxcli/request"
-	"proxcli/structs"
+	"proxcli/pkg/colors"
+	"proxcli/pkg/config"
+	"proxcli/pkg/filter"
+	"proxcli/pkg/request"
+	"proxcli/pkg/types"
 	"strconv"
 	"strings"
 
@@ -85,7 +85,7 @@ func getGroup(group string) {
 		fmt.Printf("\u274C ERROR: No Group with name %s found\n", colors.Red(group))
 	} else {
 		vms := filter.Getgroup(group)
-		data := []structs.VmInfo{}
+		data := []types.VmInfo{}
 		for _, v := range vms {
 			exist := filter.Exist("none", "false", v.Id)
 			if !exist {
@@ -108,7 +108,7 @@ func listGroup() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	groups := structs.Groups{}
+	groups := types.Groups{}
 	if err := yaml.Unmarshal(data, &groups); err != nil {
 		fmt.Println(err)
 	}

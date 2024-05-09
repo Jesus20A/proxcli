@@ -2,8 +2,8 @@ package vm
 
 import (
 	"fmt"
-	"proxcli/config"
-	"proxcli/filter"
+	"proxcli/pkg/config"
+	"proxcli/pkg/filter"
 
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"

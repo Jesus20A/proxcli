@@ -3,21 +3,21 @@ package vm
 import (
 	"encoding/json"
 	"fmt"
-	"proxcli/colors"
-	"proxcli/config"
-	"proxcli/request"
-	"proxcli/structs"
+	"proxcli/pkg/colors"
+	"proxcli/pkg/config"
+	"proxcli/pkg/request"
+	"proxcli/pkg/types"
 
 	"github.com/alexeyco/simpletable"
 	"github.com/spf13/cobra"
 )
 
 // Function to obtain all the Vms in the node
-func Vmsinfo(state string, mode string) (vms structs.Inventory) {
+func Vmsinfo(state string, mode string) (vms types.Inventory) {
 	config := config.InitConfig()
 	url := fmt.Sprintf("https://%s:8006/api2/json/nodes/%s/qemu", config["ip"], config["node"])
 	data, _ := request.NewRequest(url, "GET")
-	var info structs.VmsInfo
+	var info types.VmsInfo
 	err := json.Unmarshal(data, &info)
 	if err != nil {
 		fmt.Println(err)
@@ -26,7 +26,7 @@ func Vmsinfo(state string, mode string) (vms structs.Inventory) {
 	case state == "running" || state == "stopped":
 		makeTable(info, state)
 	case state == "false" && mode == "silent":
-		item := structs.Inventory{}
+		item := types.Inventory{}
 		err := json.Unmarshal(data, &item)
 		if err != nil {
 			fmt.Println(err)
@@ -38,7 +38,7 @@ func Vmsinfo(state string, mode string) (vms structs.Inventory) {
 	return vms
 }
 
-func makeTable(info structs.VmsInfo, state string) {
+func makeTable(info types.VmsInfo, state string) {
 	table := simpletable.New()
 
 	table.Header = &simpletable.Header{

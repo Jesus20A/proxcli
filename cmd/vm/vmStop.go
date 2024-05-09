@@ -3,10 +3,10 @@ package vm
 import (
 	"fmt"
 	"os"
-	"proxcli/colors"
-	"proxcli/config"
-	"proxcli/filter"
-	"proxcli/request"
+	"proxcli/pkg/colors"
+	"proxcli/pkg/config"
+	"proxcli/pkg/filter"
+	"proxcli/pkg/request"
 	"strconv"
 
 	"github.com/spf13/cobra"

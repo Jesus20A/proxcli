@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"proxcli/config"
+	"os"
+	"proxcli/pkg/config"
 )
 
 // Make the different requests to the Proxmox API
@@ -23,7 +24,9 @@ func NewRequest(url, method string) ([]byte, int) {
 
 	res, err := client.Do(req)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("\u274C ERROR: %v\n", err)
+		os.Exit(1)
+
 	}
 
 	body, err := io.ReadAll(res.Body)

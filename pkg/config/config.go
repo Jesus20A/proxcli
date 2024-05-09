@@ -3,10 +3,25 @@ package config
 import (
 	"fmt"
 	"os"
-	"proxcli/structs"
 
 	"gopkg.in/yaml.v3"
 )
+
+// Configuration Structs
+type Security struct {
+	User    string
+	Realm   string
+	Tokenid string
+	Token   string
+}
+type Server struct {
+	Node     string
+	Ip       string
+	Security Security
+}
+type Config struct {
+	Config []Server
+}
 
 var home, _ = os.UserHomeDir()
 
@@ -21,7 +36,7 @@ func InitConfig() (config map[string]string) {
 		fmt.Println(err)
 	}
 
-	c := structs.Config{}
+	c := Config{}
 	if err := yaml.Unmarshal(data, &c); err != nil {
 		fmt.Println(err)
 	}
