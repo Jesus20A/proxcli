@@ -4,8 +4,8 @@ import (
 	"crypto/tls"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
-	"os"
 	"proxcli/pkg/config"
 )
 
@@ -17,21 +17,20 @@ func NewRequest(url, method string) ([]byte, int) {
 
 	req, err := http.NewRequest(method, url, nil)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 	auth := fmt.Sprintf("PVEAPIToken=%s@%s!%s=%s", config["user"], config["realm"], config["tokenid"], config["token"])
 	req.Header.Add("Authorization", auth)
 
 	res, err := client.Do(req)
 	if err != nil {
-		fmt.Printf("\u274C ERROR: %v\n", err)
-		os.Exit(1)
+		log.Fatal(err)
 
 	}
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	return body, res.StatusCode

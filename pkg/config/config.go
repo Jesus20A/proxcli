@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"gopkg.in/yaml.v3"
@@ -33,12 +34,12 @@ func InitConfig() (config map[string]string) {
 
 	data, err := os.ReadFile(configfile)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	c := Config{}
 	if err := yaml.Unmarshal(data, &c); err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	config = make(map[string]string)

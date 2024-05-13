@@ -6,6 +6,7 @@ package node
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"proxcli/cmd"
 	"proxcli/pkg/colors"
 	"proxcli/pkg/config"
@@ -32,7 +33,7 @@ func nodeinfo() {
 	var info types.NodeInfo
 	err := json.Unmarshal(data, &info)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	table := simpletable.New()
@@ -56,9 +57,9 @@ func nodeinfo() {
 	cells = append(cells, []*simpletable.Cell{
 		{Text: colors.White(config["node"])},
 		{Text: colors.White(strconv.Itoa(info.Node.Cpu.Cpus))},
-		{Text: colors.Green(filter.MemConverter(float32(info.Node.Memory["total"])))},
+		{Text: colors.White(filter.MemConverter(float32(info.Node.Memory["total"])))},
 		{Text: colors.Yellow(filter.MemConverter(float32(info.Node.Memory["used"])))},
-		{Text: colors.White(filter.MemConverter(float32(info.Node.Memory["free"])))},
+		{Text: colors.Green(filter.MemConverter(float32(info.Node.Memory["free"])))},
 		{Text: colors.White(info.Node.Loadavg[0])},
 		{Text: colors.Yellow(info.Node.Loadavg[1])},
 		{Text: colors.Red(info.Node.Loadavg[2])},

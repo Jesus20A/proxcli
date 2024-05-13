@@ -3,117 +3,134 @@ package filter
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
+	"proxcli/pkg/colors"
 	"proxcli/pkg/config"
 	"proxcli/pkg/request"
 	"proxcli/pkg/types"
 	"strconv"
 
-	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
 
-func Vminfo(id int) (info types.VmInfo) {
+func Vminfo(id int) (info types.VmInfo, err error) {
 	config := config.InitConfig()
 	url := fmt.Sprintf("https://%s:8006/api2/json/nodes/%s/qemu/%s/status/current", config["ip"], config["node"], strconv.Itoa(id))
-	data, _ := request.NewRequest(url, "GET")
-	err1 := json.Unmarshal(data, &info)
-	if err1 != nil {
-		fmt.Println(err1)
+	data, code := request.NewRequest(url, "GET")
+	if code != 200 {
+		err = fmt.Errorf("\u274C ERROR: No Vm with id %s found", colors.Red(strconv.Itoa(id)))
+	} else {
+		err := json.Unmarshal(data, &info)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
-	return info
+	return info, err
 }
 
-func WritetoFile(data string, filepath string) error {
+func Lxcinfo(id int) (info types.LxcInfo, err error) {
+	config := config.InitConfig()
+	url := fmt.Sprintf("https://%s:8006/api2/json/nodes/%s/lxc/%s/status/current", config["ip"], config["node"], strconv.Itoa(id))
+	data, code := request.NewRequest(url, "GET")
+	if code != 200 {
+		err = fmt.Errorf("\u274C ERROR: No container with id %s found", colors.Red(strconv.Itoa(id)))
+	} else {
+		err := json.Unmarshal(data, &info)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	return info, err
+}
+
+func WritetoFile(data string, filepath string) (err error) {
 
 	file, err := os.OpenFile(filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 
 	if err != nil {
-		cobra.CheckErr(err)
+		log.Fatal(err)
 	}
 
 	defer file.Close()
 
-	_, err2 := file.WriteString(data)
+	_, err = file.WriteString(data)
 
-	if err2 != nil {
-		cobra.CheckErr(err2)
+	if err != nil {
+		log.Fatal(err)
 	}
-	return err2
+	return err
 }
 
-func Getgroup(group string) (hosts []types.Vm) {
+func Getgroup(group string) (hosts []types.Vm, err error) {
 
 	data, err := os.ReadFile(config.Inventoryfile)
 	if err != nil {
-		fmt.Println(err)
-	}
-
-	c := types.Groups{}
-	if err := yaml.Unmarshal(data, &c); err != nil {
-		fmt.Println(err)
-	}
-
-	for _, v := range c.Groups {
-		if v.Name == group {
-			hosts = v.Vms
-			break
-		}
-	}
-	return hosts
-}
-
-func GetId(name string) (id int) {
-	data, err := os.ReadFile(config.Inventoryfile)
-	if err != nil {
-		fmt.Println(err)
-	}
-	c := types.Vms{}
-	if err := yaml.Unmarshal(data, &c); err != nil {
-		fmt.Println(err)
-	}
-	for _, v := range c.Vms {
-		if v.Name == name {
-			id = v.Id
-			break
-		}
-	}
-	return id
-}
-
-func Exist(name string, group string, id int) (exist bool) {
-	data, err := os.ReadFile(config.Inventoryfile)
-	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	g := types.Groups{}
 	if err := yaml.Unmarshal(data, &g); err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
+	exist := false
 	for _, v := range g.Groups {
+		e := &exist
 		if v.Name == group {
-			exist = true
+			hosts = v.Vms
+			*e = true
 			break
 		}
 	}
 
-	n := types.Vms{}
-	if err := yaml.Unmarshal(data, &n); err != nil {
-		fmt.Println(err)
+	if !exist {
+		err = fmt.Errorf("\u274C ERROR: No Group with name %s found", colors.Red(group))
 	}
-	for _, v := range n.Vms {
-		if v.Name == name {
-			exist = true
-			break
+	return hosts, err
+}
+
+func GetId(name, t string) (id int, err error) {
+	data, err := os.ReadFile(config.Inventoryfile)
+	if err != nil {
+		log.Fatal(err)
+	}
+	switch t {
+	case "qemu":
+		v := types.Vms{}
+		if err := yaml.Unmarshal(data, &v); err != nil {
+			log.Fatal(err)
+		}
+		exist := false
+		for _, vm := range v.Vms {
+			e := &exist
+			if vm.Name == name {
+				id = vm.Id
+				*e = true
+				break
+			}
+		}
+		if !exist {
+			err = fmt.Errorf("\u274C ERROR: No Vm with name %s found", colors.Red(name))
+		}
+	case "lxc":
+		l := types.LxcInventory{}
+		if err := yaml.Unmarshal(data, &l); err != nil {
+			log.Fatal(err)
+		}
+		exist := false
+		for _, lxc := range l.Lxc {
+			e := &exist
+			if lxc.Name == name {
+				id = lxc.Id.(int)
+				*e = true
+				break
+			}
+		}
+		if !exist {
+			err = fmt.Errorf("\u274C ERROR: No Container with name %s found", colors.Red(name))
 		}
 	}
-
-	i := Vminfo(id)
-	if i.Data.Vmid == id {
-		exist = true
-	}
-	return exist
+	return id, err
 }
 
 func MemConverter(bytes float32) string {

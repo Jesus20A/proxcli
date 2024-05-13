@@ -26,7 +26,6 @@ func init() {
 	vmCmd.AddCommand(VmGet)
 	vmCmd.AddCommand(VmStart)
 	vmCmd.AddCommand(VmStop)
-	vmCmd.AddCommand(Inventory)
 	vmCmd.AddCommand(Group)
 	Group.AddCommand(GetGroup)
 	Group.AddCommand(ListGroup)
@@ -39,8 +38,8 @@ func init() {
 	VmStart.Flags().IntVarP(&id, "id", "i", -1, "Vm id")
 	VmStop.Flags().StringVarP(&name, "name", "n", "none", "Vm name (Only if inventory configured)")
 	VmStop.Flags().IntVarP(&id, "id", "i", -1, "Vm id")
-	GetGroup.Flags().StringVarP(&name, "name", "n", "none", "Group name (Only if inventory configured)")
-	StartGroup.Flags().StringVarP(&name, "name", "n", "none", "Group name (Only if inventory configured)")
-	StopGroup.Flags().StringVarP(&name, "name", "n", "none", "Group name (Only if inventory configured)")
+	GetGroup.Flags().StringVarP(&group, "name", "n", "none", "Group name (Only if inventory configured)")
+	StartGroup.Flags().StringVarP(&group, "name", "n", "none", "Group name (Only if inventory configured)")
+	StopGroup.Flags().StringVarP(&group, "name", "n", "none", "Group name (Only if inventory configured)")
 
 }

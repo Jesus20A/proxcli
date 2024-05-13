@@ -1,16 +1,16 @@
-package vm
+package lxc
 
 import (
 	"os"
-	"proxcli/pkg/stop"
+	"proxcli/pkg/start"
 
 	"github.com/spf13/cobra"
 )
 
-var VmStop = &cobra.Command{
-	Use:   "stop",
-	Short: "Stop Vm",
-	Long:  `Stop a Vm by specifying its ID or, if the inventory is configured, also by Name`,
+var LxcStart = &cobra.Command{
+	Use:   "start",
+	Short: "Start container",
+	Long:  `Start a Container by specifying its ID or, if the inventory is configured, also by Name`,
 	Run: func(cmd *cobra.Command, args []string) {
 		id, _ := cmd.Flags().GetInt("id")
 		name, _ := cmd.Flags().GetString("name")
@@ -18,6 +18,6 @@ var VmStop = &cobra.Command{
 			cmd.Help()
 			os.Exit(0)
 		}
-		stop.Stop(id, name, "qemu")
+		start.Start(id, name, "lxc")
 	},
 }

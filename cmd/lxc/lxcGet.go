@@ -1,7 +1,6 @@
-package vm
+package lxc
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"proxcli/pkg/colors"
@@ -13,7 +12,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func vmtable(data types.VmInfo) {
+func Table(data types.LxcInfo) {
 	table := simpletable.New()
 
 	table.Header = &simpletable.Header{
@@ -27,9 +26,8 @@ func vmtable(data types.VmInfo) {
 	}
 
 	var cells [][]*simpletable.Cell
-
 	cells = append(cells, []*simpletable.Cell{
-		{Text: fmt.Sprintf("%d", data.Data.Vmid)},
+		{Text: colors.White(strconv.Itoa(int((data.Data.Vmid.(float64)))))},
 		{Text: colors.Blue(data.Data.Name)},
 		{Text: colors.White(strconv.Itoa(data.Data.Cpus))},
 		{Text: colors.Yellow(filter.MemConverter(float32(data.Data.Memory)))},
@@ -42,37 +40,37 @@ func vmtable(data types.VmInfo) {
 
 }
 
-func vmGet(name string, id int) {
+func lxcGet(id int, name string) {
 	switch {
 	case name != "none":
-		id, err := filter.GetId(name, "qemu")
+		id, err := filter.GetId(name, "lxc")
 		if err != nil {
 			log.Fatal(err)
 		}
-		info, _ := filter.Vminfo(id)
-		vmtable(info)
+		info, _ := filter.Lxcinfo(id)
+		Table(info)
 
 	case id != 0:
-		info, err := filter.Vminfo(id)
+		info, err := filter.Lxcinfo(id)
 		if err != nil {
 			log.Fatal(err)
 		}
-		vmtable(info)
+		Table(info)
 
 	}
 }
 
-var VmGet = &cobra.Command{
+var LxcGet = &cobra.Command{
 	Use:   "get",
-	Short: "Get Vm info",
-	Long:  `Display more detail info about the Vm, like cpu and memory`,
+	Short: "Get Lxc container info",
+	Long:  `Display more detail info about the container, like cpu and memory`,
 	Run: func(cmd *cobra.Command, args []string) {
-		name, _ := cmd.Flags().GetString("name")
 		id, _ := cmd.Flags().GetInt("id")
+		name, _ := cmd.Flags().GetString("name")
 		if name == "none" && id == -1 {
 			cmd.Help()
 			os.Exit(0)
 		}
-		vmGet(name, id)
+		lxcGet(id, name)
 	},
 }

@@ -2,11 +2,13 @@ package vm
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"proxcli/pkg/colors"
 	"proxcli/pkg/config"
 	"proxcli/pkg/filter"
-	"proxcli/pkg/request"
+	"proxcli/pkg/start"
+	"proxcli/pkg/stop"
 	"proxcli/pkg/types"
 	"strconv"
 	"strings"
@@ -17,90 +19,104 @@ import (
 )
 
 func groupStart(group string) {
-	config := config.InitConfig()
-	exist := filter.Exist(name, group, id)
-	if !exist {
-		fmt.Printf("\u274C ERROR: No Group with name %s found\n", colors.Red(group))
-	} else {
-		vms := filter.Getgroup(group)
-		for _, v := range vms {
-			exist := filter.Exist("none", "false", v.Id)
-			if !exist {
-				fmt.Printf("\u274C ERROR: No Vm with id %s found\n", colors.Red(strconv.Itoa(v.Id)))
-			} else if vm := filter.Vminfo(v.Id); vm.Data.Name == v.Name {
-				if vm.Data.Status == "running" {
-					fmt.Printf("\u2705 %s Vm is already running\n", vm.Data.Name)
-				} else {
-					url := fmt.Sprintf("https://%s:8006/api2/json/nodes/%s/qemu/%s/status/start", config["ip"], config["node"], strconv.Itoa(v.Id))
-					data, code := request.NewRequest(url, "POST")
-					if code == 200 {
-						fmt.Printf("\u2705 %s Vm started\n", vm.Data.Name)
-					} else {
-						fmt.Printf("\u274C %d - ERROR %s\n", code, data)
-					}
-				}
-			} else {
-				fmt.Printf("\u274C Error: Vm name %s and id %s do not match\n", colors.Red(v.Name), colors.Red(strconv.Itoa(v.Id)))
-			}
-		}
-
+	vms, err := filter.Getgroup(group)
+	if err != nil {
+		log.Fatal(err)
 	}
+	for _, v := range vms {
+		vm, err := filter.Vminfo(v.Id)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if vm.Data.Name == v.Name {
+			if vm.Data.Status == "running" {
+				fmt.Printf("\u2705 %s Vm is already running\n", vm.Data.Name)
+			} else {
+				start.Start(v.Id, "none", "qemu")
+			}
+		} else {
+			fmt.Printf("\u274C Error: Vm name %s and id %s do not match\n", colors.Red(v.Name), colors.Red(strconv.Itoa(v.Id)))
+		}
+	}
+
 }
 
 func groupStop(group string) {
-	config := config.InitConfig()
-	exist := filter.Exist(name, group, id)
-	if !exist {
-		fmt.Printf("\u274C ERROR: No Group with name %s found\n", colors.Red(group))
-	} else {
-		vms := filter.Getgroup(group)
-		for _, v := range vms {
-			exist := filter.Exist("none", "false", v.Id)
-			if !exist {
-				fmt.Printf("\u274C ERROR: No Vm with id %s found\n", colors.Red(strconv.Itoa(v.Id)))
-			} else if vm := filter.Vminfo(v.Id); vm.Data.Name == v.Name {
-				if vm.Data.Status == "stopped" {
-					fmt.Printf("\u2705 %s Vm is already stopped\n", vm.Data.Name)
-				} else {
-					url := fmt.Sprintf("https://%s:8006/api2/json/nodes/%s/qemu/%s/status/shutdown", config["ip"], config["node"], strconv.Itoa(v.Id))
-					data, code := request.NewRequest(url, "POST")
-					if code == 200 {
-						fmt.Printf("\u2705 %s Vm stopped\n", vm.Data.Name)
-					} else {
-						fmt.Printf("\u274C %d - ERROR %s\n", code, data)
-					}
-				}
-			} else {
-				fmt.Printf("\u274C Error: Vm name %s and id %s do not match\n", colors.Red(v.Name), colors.Red(strconv.Itoa(v.Id)))
-			}
+	vms, err := filter.Getgroup(group)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, v := range vms {
+		vm, err := filter.Vminfo(v.Id)
+		if err != nil {
+			log.Fatal(err)
 		}
+		if vm.Data.Name == v.Name {
+			if vm.Data.Status == "stopped" {
+				fmt.Printf("\u2705 %s Vm is already stopped\n", vm.Data.Name)
+			} else {
+				stop.Stop(v.Id, "none", "qemu")
+			}
+		} else {
+			log.Fatalf("\u274C Error: Vm name %s and id %s do not match\n", colors.Red(v.Name), colors.Red(strconv.Itoa(v.Id)))
 
+		}
 	}
 
 }
 
-func getGroup(group string) {
-	exist := filter.Exist(name, group, id)
-	if !exist {
-		fmt.Printf("\u274C ERROR: No Group with name %s found\n", colors.Red(group))
-	} else {
-		vms := filter.Getgroup(group)
-		data := []types.VmInfo{}
-		for _, v := range vms {
-			exist := filter.Exist("none", "false", v.Id)
-			if !exist {
-				fmt.Printf("\u274C No Vm with id %s found\n", colors.Red(strconv.Itoa(v.Id)))
-			} else if vm := filter.Vminfo(v.Id); vm.Data.Name == v.Name {
-				info := filter.Vminfo(v.Id)
-				data = append(data, info)
-			} else {
-				fmt.Printf("\u274C Error: Vm name %s and id %s do not match\n", colors.Red(v.Name), colors.Red(strconv.Itoa(v.Id)))
-				os.Exit(1)
-			}
-		}
-		Table(data)
+func grouptable(data []types.VmInfo) {
+	table := simpletable.New()
+
+	table.Header = &simpletable.Header{
+		Cells: []*simpletable.Cell{
+			{Align: simpletable.AlignCenter, Text: "id"},
+			{Align: simpletable.AlignCenter, Text: "Name"},
+			{Align: simpletable.AlignCenter, Text: "Cpu"},
+			{Align: simpletable.AlignCenter, Text: "Mem"},
+			{Align: simpletable.AlignCenter, Text: "Status"},
+		},
+	}
+
+	var cells [][]*simpletable.Cell
+
+	for _, item := range data {
+
+		cells = append(cells, []*simpletable.Cell{
+			{Text: fmt.Sprintf("%d", item.Data.Vmid)},
+			{Text: colors.Blue(item.Data.Name)},
+			{Text: colors.White(strconv.Itoa(item.Data.Cpus))},
+			{Text: colors.Yellow(filter.MemConverter(float32(item.Data.Memory)))},
+			{Text: colors.Color(item.Data.Status, item.Data.Status)},
+		})
 
 	}
+
+	table.Body = &simpletable.Body{Cells: cells}
+	table.SetStyle(simpletable.StyleRounded)
+	table.Println()
+
+}
+func getGroup(group string) {
+	vms, err := filter.Getgroup(group)
+	if err != nil {
+		log.Fatal(err)
+	}
+	data := []types.VmInfo{}
+	for _, v := range vms {
+		vm, err := filter.Vminfo(v.Id)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if vm.Data.Name == v.Name {
+			data = append(data, vm)
+		} else {
+			fmt.Printf("\u274C Error: Vm name %s and id %s do not match\n", colors.Red(v.Name), colors.Red(strconv.Itoa(v.Id)))
+			os.Exit(1)
+		}
+	}
+	grouptable(data)
+
 }
 
 func listGroup() {
@@ -110,7 +126,7 @@ func listGroup() {
 	}
 	groups := types.Groups{}
 	if err := yaml.Unmarshal(data, &groups); err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 	table := simpletable.New()
 
@@ -145,12 +161,12 @@ var GetGroup = &cobra.Command{
 	Short: "Get group members info",
 	Long:  `Display more detailed information about the VMs, which are part of the group`,
 	Run: func(cmd *cobra.Command, args []string) {
-		name, _ := cmd.Flags().GetString("name")
+		group, _ := cmd.Flags().GetString("name")
 		if isSet := cmd.Flags().Lookup("name").Changed; !isSet {
 			cmd.Help()
 			os.Exit(0)
 		}
-		getGroup(name)
+		getGroup(group)
 	},
 }
 
@@ -159,12 +175,12 @@ var StartGroup = &cobra.Command{
 	Short: "Start VMs Group",
 	Long:  `Start the VMs in a group, specifying the group name`,
 	Run: func(cmd *cobra.Command, args []string) {
-		name, _ := cmd.Flags().GetString("name")
+		group, _ := cmd.Flags().GetString("name")
 		if isSet := cmd.Flags().Lookup("name").Changed; !isSet {
 			cmd.Help()
 			os.Exit(0)
 		}
-		groupStart(name)
+		groupStart(group)
 	},
 }
 
@@ -173,12 +189,12 @@ var StopGroup = &cobra.Command{
 	Short: "Stop VMs Group",
 	Long:  `Stop the VMs in a group, specifying the group name`,
 	Run: func(cmd *cobra.Command, args []string) {
-		name, _ := cmd.Flags().GetString("name")
+		group, _ := cmd.Flags().GetString("name")
 		if isSet := cmd.Flags().Lookup("name").Changed; !isSet {
 			cmd.Help()
 			os.Exit(0)
 		}
-		groupStop(name)
+		groupStop(group)
 	},
 }
 

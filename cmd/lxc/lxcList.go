@@ -1,4 +1,4 @@
-package vm
+package lxc
 
 import (
 	"encoding/json"
@@ -14,32 +14,31 @@ import (
 )
 
 // Function to obtain all the Vms in the node
-func Vmsinfo(state string, mode string) (vms types.VmInventory) {
+func Lxcsinfo(state, mode string) (lxc types.LxcInventory) {
 	config := config.InitConfig()
-	url := fmt.Sprintf("https://%s:8006/api2/json/nodes/%s/qemu", config["ip"], config["node"])
+	url := fmt.Sprintf("https://%s:8006/api2/json/nodes/%s/lxc", config["ip"], config["node"])
 	data, _ := request.NewRequest(url, "GET")
-	var info types.VmsInfo
+	var info types.LxcsInfo
 	err := json.Unmarshal(data, &info)
 	if err != nil {
 		log.Fatal(err)
 	}
 	switch {
-	case state == "running" || state == "stopped":
-		makeTable(info, state)
 	case state == "false" && mode == "silent":
-		item := types.VmInventory{}
+		item := types.LxcInventory{}
 		err := json.Unmarshal(data, &item)
 		if err != nil {
 			log.Fatal(err)
 		}
-		vms = item
+		lxc = item
 	default:
-		makeTable(info, state)
+		listTable(info, state)
 	}
-	return vms
+	return lxc
+
 }
 
-func makeTable(info types.VmsInfo, state string) {
+func listTable(info types.LxcsInfo, state string) {
 	table := simpletable.New()
 
 	table.Header = &simpletable.Header{
@@ -55,13 +54,13 @@ func makeTable(info types.VmsInfo, state string) {
 
 		if item.Status == state {
 			cells = append(cells, []*simpletable.Cell{
-				{Text: fmt.Sprintf("%d", item.Vmid)},
+				{Text: colors.White(item.Vmid.(string))},
 				{Text: colors.Blue(item.Name)},
 				{Text: colors.Color(state, item.Status)},
 			})
 		} else if state == "all" {
 			cells = append(cells, []*simpletable.Cell{
-				{Text: fmt.Sprintf("%d", item.Vmid)},
+				{Text: colors.White(item.Vmid.(string))},
 				{Text: colors.Blue(item.Name)},
 				{Text: colors.Color(item.Status, item.Status)},
 			})
@@ -73,12 +72,12 @@ func makeTable(info types.VmsInfo, state string) {
 	table.Println()
 }
 
-var VmsList = &cobra.Command{
+var LxcList = &cobra.Command{
 	Use:   "list",
-	Short: "List all the VMs",
-	Long:  `Display all VMs along with their current status`,
+	Short: "List all the Lxc containers",
+	Long:  `Display all containers along with their current status`,
 	Run: func(cmd *cobra.Command, args []string) {
 		state, _ := cmd.Flags().GetString("state")
-		Vmsinfo(state, "verbose")
+		Lxcsinfo(state, "verbose")
 	},
 }

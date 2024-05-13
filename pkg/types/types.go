@@ -46,10 +46,32 @@ type NodeInfo struct {
 }
 
 // Inventory Structs
-type Inventory struct {
-	Vms []InventoryInfo `json:"data"`
+type VmInventory struct {
+	Vms []VmInventoryInfo `json:"data"`
 }
-type InventoryInfo struct {
+type VmInventoryInfo struct {
 	Name string `json:"name"`
 	Id   int    `json:"vmid"`
+}
+type LxcInventory struct {
+	Lxc []LxcInventoryInfo `json:"data"`
+}
+type LxcInventoryInfo struct {
+	Name string `json:"name"`
+	Id   any    `json:"vmid"`
+}
+
+// Lxc Structs
+type LxcInformation struct {
+	Name   string `json:"name"`
+	Status string `json:"status"`
+	Vmid   any    `json:"vmid"`
+	Cpus   int    `json:"cpus"`
+	Memory int    `json:"maxmem"`
+}
+type LxcsInfo struct {
+	Data []LxcInformation `json:"data"`
+}
+type LxcInfo struct {
+	Data LxcInformation `json:"data"`
 }
