@@ -147,21 +147,25 @@ Create inventory file of VMs and Lxc containers
 - #### group
 	perform actions on a group if it is configured in the inventory file.
 	 - list
+	 
 		List the groups and their members
 	
 		![](img/Pasted%20image%2020240430183745.png)
 		
 	 - get
+
 		Display more detailed information about the VMs, which are part of the group.
 	
 		![](img/Pasted%20image%2020240430184055.png)
 		
 	 - start
+
 		Start the VMs in a group, specifying the group name.
 		
 		![](img/Pasted%20image%2020240430184339.png)
 		
 	 - stop
+
 		Stop the VMs in a group, specifying the group name.
 				
 		![](img/Pasted%20image%2020240430184209.png)
