@@ -1,13 +1,13 @@
 
-        ██████╗ ██████╗  ██████╗ ██╗  ██╗ ██████╗██╗     ██╗
-        ██╔══██╗██╔══██╗██╔═══██╗╚██╗██╔╝██╔════╝██║     ██║
-        ██████╔╝██████╔╝██║   ██║ ╚███╔╝ ██║     ██║     ██║
-        ██╔═══╝ ██╔══██╗██║   ██║ ██╔██╗ ██║     ██║     ██║
-        ██║     ██║  ██║╚██████╔╝██╔╝ ██╗╚██████╗███████╗██║
-        ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝
+					██████╗ ██████╗  ██████╗ ██╗  ██╗ ██████╗██╗     ██╗
+					██╔══██╗██╔══██╗██╔═══██╗╚██╗██╔╝██╔════╝██║     ██║
+					██████╔╝██████╔╝██║   ██║ ╚███╔╝ ██║     ██║     ██║
+					██╔═══╝ ██╔══██╗██║   ██║ ██╔██╗ ██║     ██║     ██║
+					██║     ██║  ██║╚██████╔╝██╔╝ ██╗╚██████╗███████╗██║
+					╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝
 
 
-Proxcli is a small CLI client for the Proxmox API that allows you to start, stop and list the VMs on your Proxmox server. It also supports the creation of an inventory file to be able to call the VMs by its name and not just by ID. You can create groups inside the inventory file, where you can group VMs with a similar purpose to start and stop them together.
+Proxcli is a small CLI client for the Proxmox API that allows you to start, stop and list the VMs and LXC containers on your Proxmox server. It also supports the creation of an inventory file to be able to call the VMs by its name and not just by ID. You can create groups inside the inventory file, where you can group VMs with a similar purpose to start and stop them together.
 
 ## Configuration
 
@@ -43,10 +43,10 @@ vms:
     - name: <vm-name>
       id: <vm-id>
 lxc:
-    - name: <vm-name>
-      id: <vm-id>
-    - name: <vm-name>
-      id: <vm-id>
+    - name: <lxc-name>
+      id: <lxc-id>
+    - name: <lxc-name>
+      id: <lxc-id>
 ```
 
 If you change any Vm or container info like the name, id or delete one, and want to update the information  you can just run the command again whit the source that you want to update using the **--source** flag  with one of the following values **vm**, **lxc** or **all**, and it will append another block of **vms** or **lxc** to the file with the most recent information, and you just delete the old one.
