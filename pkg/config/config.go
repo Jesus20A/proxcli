@@ -25,14 +25,70 @@ type Config struct {
 }
 
 var home, _ = os.UserHomeDir()
+var Configdir string = fmt.Sprintf("%s/.proxcli", home)
+var Inventoryfile string = fmt.Sprintf("%s/inventory.yaml", Configdir)
+var Configfile string = fmt.Sprintf("%s/proxcli.yaml", Configdir)
 
-var Inventoryfile string = fmt.Sprintf("%s/.proxcli/inventory.yml", home)
+func CreateConfig() {
+	_, err := os.Stat(Configdir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			fmt.Printf("[*] No config directory found in %s\n", Configdir)
+			fmt.Print("[*] Do you want to create the directory? [y/n] ")
+			var answer string
+			fmt.Scanln(&answer)
+			switch answer {
+			case "y":
+				os.MkdirAll(Configdir, 0755)
+				fmt.Printf("\u2705Configuration directory created at: %s\n", Configdir)
+			case "n":
+				fmt.Printf("[*] No config directory found in %s\n", Configdir)
+				os.Exit(1)
+			default:
+				log.Fatal("\u274C Error: invalid input")
+			}
+		}
+	} else {
+		fmt.Printf("\u2705 Configuration directory already created at %s\n", Configdir)
+	}
+	fmt.Printf("[*] Creating configuration file at %v\n", Configfile)
+	conf := Config{}
+	fmt.Print("[*] Enter your proxmox node name: ")
+	var node string
+	fmt.Scanln(&node)
+	fmt.Print("[*] Enter your proxmox ip address: ")
+	var ip string
+	fmt.Scanln(&ip)
+	fmt.Print("[*] Enter your proxmox username: ")
+	var user string
+	fmt.Scanln(&user)
+	var realm string = "pve"
+	fmt.Print("[*] Enter your proxmox token id: ")
+	var tokenid string
+	fmt.Scanln(&tokenid)
+	fmt.Print("[*] Enter your proxmox token: ")
+	var token string
+	fmt.Scanln(&token)
+	conf.Config = append(conf.Config, Server{
+		Node:     node,
+		Ip:       ip,
+		Security: Security{User: user, Realm: realm, Tokenid: tokenid, Token: token},
+	})
+	data, err := yaml.Marshal(conf)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = os.WriteFile(Configfile, data, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("\u2705 Configuration file created at %s\n", Configfile)
+}
 
 // Obtain config parameters from config file
 func InitConfig() (config map[string]string) {
-	var configfile string = fmt.Sprintf("%s/.proxcli/proxcli.yml", home)
 
-	data, err := os.ReadFile(configfile)
+	data, err := os.ReadFile(Configfile)
 	if err != nil {
 		log.Fatal(err)
 	}

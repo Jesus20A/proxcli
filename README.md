@@ -1,17 +1,17 @@
 
-					██████╗ ██████╗  ██████╗ ██╗  ██╗ ██████╗██╗     ██╗
-					██╔══██╗██╔══██╗██╔═══██╗╚██╗██╔╝██╔════╝██║     ██║
-					██████╔╝██████╔╝██║   ██║ ╚███╔╝ ██║     ██║     ██║
-					██╔═══╝ ██╔══██╗██║   ██║ ██╔██╗ ██║     ██║     ██║
-					██║     ██║  ██║╚██████╔╝██╔╝ ██╗╚██████╗███████╗██║
-					╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝
+				██████╗ ██████╗  ██████╗ ██╗  ██╗ ██████╗██╗     ██╗
+				██╔══██╗██╔══██╗██╔═══██╗╚██╗██╔╝██╔════╝██║     ██║
+				██████╔╝██████╔╝██║   ██║ ╚███╔╝ ██║     ██║     ██║
+				██╔═══╝ ██╔══██╗██║   ██║ ██╔██╗ ██║     ██║     ██║
+				██║     ██║  ██║╚██████╔╝██╔╝ ██╗╚██████╗███████╗██║
+				╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝
 
 
 Proxcli is a small CLI client for the Proxmox API that allows you to start, stop and list the VMs and LXC containers on your Proxmox server. It also supports the creation of an inventory file to be able to call the VMs by its name and not just by ID. You can create groups inside the inventory file, where you can group VMs with a similar purpose to start and stop them together.
 
 ## Configuration
 
-Proxcli expect a **yaml** config file called **proxcli.yml** under the folder **$HOME/.proxcli** and the content needs to have the following structure:
+Proxcli expect a **yaml** config file called **proxcli.yaml** under the folder **$HOME/.proxcli** and the content needs to have the following structure:
 
 ```yaml
 config:
@@ -24,7 +24,13 @@ config:
       token: <api-token>
 ```
 
-Currently, it only supports authentication through an API token, so you will need to create one and give enough permissions to it and the user  to be able to perform the actions.
+You can run the **configure** command, and it will look for the config directory and if it's not present it will ask you to create it, then it will ask for the information to create the configuration file.
+
+![](img/Pasted%20image%2020240518122838.png)
+
+![](img/Pasted%20image%2020240518123235.png)
+
+Currently, it only supports authentication through an API token, so you will need to create one and give enough permissions to it to be able to perform the actions.
 
 >  Note:  At the moment, you are limited to one node, but I am working to add support to manage multiple nodes.
 
@@ -34,7 +40,7 @@ Once you put your configuration information in the configuration file, you can c
 
 ![](img/Pasted%20image%2020240512234049.png)
 
-The command by default will collect the information of all the VMs and Lxc containers on the node and create a file called **inventory.yml** under the same folder as the configuration file (**$HOME/.proxcli**) with the following structure that you can use to create the file manually if preferred.
+The command by default will collect the information of all the VMs and Lxc containers on the node and create a file called **inventory.yaml** under the same folder as the configuration file (**$HOME/.proxcli**) with the following structure that you can use to create the file manually if preferred.
 
 ```yaml
 vms:

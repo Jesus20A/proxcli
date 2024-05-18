@@ -1,13 +1,3 @@
-vms:
-    - name: <vm-name>
-      id: <vm-id>
-    - name: <vm-name>
-      id: <vm-id>
-    - name: <vm-name>
-      id: <vm-id>
-    - name: <vm-name>
-      id: <vm-id>
-
 groups:
   - name: <group-name>
     vms:
@@ -21,3 +11,17 @@ groups:
         id: <vm-id>
       - name: <vm-name>
         id: <vm-id>
+vms:
+    - name: <vm-name>
+      id: <vm-id>
+    - name: <vm-name>
+      id: <vm-id>
+    - name: <vm-name>
+      id: <vm-id>
+    - name: <vm-name>
+      id: <vm-id>
+lxc:
+    - name: <lxc-name>
+      id: <lxc-id>
+    - name: <lxc-name>
+      id: <lxc-id>

@@ -28,9 +28,9 @@ func Inventory(source string) {
 			log.Fatal(err)
 		} else if err := filter.WritetoFile(string(out), config.Inventoryfile); err != nil {
 			log.Fatal(err)
-		} else {
-			fmt.Printf("\u2705 VMs added to inventory file at %s\n", config.Inventoryfile)
 		}
+		fmt.Printf("\u2705 VMs added to inventory file at %s\n", config.Inventoryfile)
+
 	case "lxc":
 		l := lxc.Lxcsinfo("false", "silent")
 		container := &l
@@ -43,21 +43,18 @@ func Inventory(source string) {
 			log.Fatal(err)
 		} else if err := filter.WritetoFile(string(out), config.Inventoryfile); err != nil {
 			log.Fatal(err)
-		} else {
-			fmt.Printf("\u2705 Lxc containers added to inventory file at %s\n", config.Inventoryfile)
 		}
+		fmt.Printf("\u2705 Lxc containers added to inventory file at %s\n", config.Inventoryfile)
 
 	case "all":
 		v := vm.Vmsinfo("false", "silent")
-
 		out, err := yaml.Marshal(v)
 		if err != nil {
 			log.Fatal(err)
 		} else if err := filter.WritetoFile(string(out), config.Inventoryfile); err != nil {
 			log.Fatal(err)
-		} else {
-			fmt.Printf("\u2705 VMs added to inventory file at %s\n", config.Inventoryfile)
 		}
+		fmt.Printf("\u2705 VMs added to inventory file at %s\n", config.Inventoryfile)
 
 		l := lxc.Lxcsinfo("false", "silent")
 		container := &l
@@ -70,11 +67,11 @@ func Inventory(source string) {
 			log.Fatal(err)
 		} else if err := filter.WritetoFile(string(out), config.Inventoryfile); err != nil {
 			log.Fatal(err)
-		} else {
-			fmt.Printf("\u2705 Lxc containers added to inventory file at %s\n", config.Inventoryfile)
 		}
+		fmt.Printf("\u2705 Lxc containers added to inventory file at %s\n", config.Inventoryfile)
+
 	default:
-		fmt.Println("Invalid source")
+		log.Fatal("\u274C Error: invalid source")
 	}
 
 }

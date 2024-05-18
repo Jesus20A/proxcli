@@ -44,24 +44,6 @@ func Lxcinfo(id int) (info types.LxcInfo, err error) {
 	return info, err
 }
 
-func WritetoFile(data string, filepath string) (err error) {
-
-	file, err := os.OpenFile(filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer file.Close()
-
-	_, err = file.WriteString(data)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	return err
-}
-
 func Getgroup(group string) (hosts []types.Vm, err error) {
 
 	data, err := os.ReadFile(config.Inventoryfile)
@@ -131,6 +113,24 @@ func GetId(name, t string) (id int, err error) {
 		}
 	}
 	return id, err
+}
+
+func WritetoFile(data string, filepath string) (err error) {
+
+	file, err := os.OpenFile(filepath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+
+	if err != nil {
+		return err
+	}
+
+	defer file.Close()
+
+	_, err = file.WriteString(data)
+
+	if err != nil {
+		return err
+	}
+	return err
 }
 
 func MemConverter(bytes float32) string {
