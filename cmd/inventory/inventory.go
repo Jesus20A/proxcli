@@ -11,7 +11,6 @@ import (
 	"proxcli/cmd/vm"
 	"proxcli/pkg/config"
 	"proxcli/pkg/filter"
-	"strconv"
 
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
@@ -35,7 +34,7 @@ func Inventory(source string) {
 		l := lxc.Lxcsinfo("false", "silent")
 		container := &l
 		for i := range len(container.Lxc) {
-			container.Lxc[i].Id, _ = strconv.Atoi(container.Lxc[i].Id.(string))
+			container.Lxc[i].Id = int64(container.Lxc[i].Id.(float64))
 		}
 
 		out, err := yaml.Marshal(l)
@@ -59,7 +58,7 @@ func Inventory(source string) {
 		l := lxc.Lxcsinfo("false", "silent")
 		container := &l
 		for i := range len(container.Lxc) {
-			container.Lxc[i].Id, _ = strconv.Atoi(container.Lxc[i].Id.(string))
+			container.Lxc[i].Id = int64(container.Lxc[i].Id.(float64))
 		}
 
 		out, err = yaml.Marshal(l)

@@ -54,13 +54,13 @@ func listTable(info types.LxcsInfo, state string) {
 
 		if item.Status == state {
 			cells = append(cells, []*simpletable.Cell{
-				{Text: colors.White(item.Vmid.(string))},
+				{Text: colors.White(fmt.Sprint(int64(item.Vmid.(float64))))},
 				{Text: colors.Blue(item.Name)},
 				{Text: colors.Color(state, item.Status)},
 			})
 		} else if state == "all" {
 			cells = append(cells, []*simpletable.Cell{
-				{Text: colors.White(item.Vmid.(string))},
+				{Text: colors.White(fmt.Sprint(int64(item.Vmid.(float64))))},
 				{Text: colors.Blue(item.Name)},
 				{Text: colors.Color(item.Status, item.Status)},
 			})
